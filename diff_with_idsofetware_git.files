@@ -1,0 +1,6 @@
+linux/gl_glx.c
+linux/rw_x11.c
+linux/snd_linux.c
+linux/sys_linux.c
+qcommon/md4.c
+

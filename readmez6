@@ -1,0 +1,3 @@
+to compile backup and replace sdl-config 
+1- PATH=/arm-eabi/arm-linux-gnueabi/bin:$PATH
+2- make

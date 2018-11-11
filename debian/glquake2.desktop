@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=GL QuakeII
+Name[zh_CN]=雷神之锤2 - GL
+Exec=/usr/bin/fingerterm -e /usr/share/quake2/GLquake2
+Icon=/usr/share/icons/hicolor/80x80/apps/glquake2_80.png
+X-Osso-Type=application/x-executable
+Categories=Game;ActionGame;

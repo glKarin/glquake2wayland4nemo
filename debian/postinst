@@ -1,0 +1,59 @@
+#!/bin/sh
+
+set -e
+
+INSTALL_DIR=/usr/share/quake2
+QUAKE2_HOME=/home/user/.quake2
+BASEQ2=baseq2
+
+#echo "ln -s /usr/share/quake2/GLquake2 /usr/bin/quake2"
+#ln -s /usr/share/quake2/GLquake2 /usr/bin/quake2
+
+if [ "$1" = "configure" ]; then
+	if [ ! -d ${QUAKE2_HOME} ]; then
+		devel-su user -c "mkdir ${QUAKE2_HOME}"
+		echo "mkdir ${QUAKE2_HOME}"
+		if [ x$? != "x0" ]; then
+			echo "[Error]: Create quake2 home directory fail! Exiting..."
+			exit 1;
+		fi
+	fi
+
+	if [ ! -d ${QUAKE2_HOME}/${BASEQ2} ]; then
+		devel-su user -c "mkdir ${QUAKE2_HOME}/${BASEQ2}"
+		echo "mkdir ${QUAKE2_HOME}/${BASEQ2}"
+		if [ x$? != "x0" ]; then
+			echo "[Error]: Create quake2 base directory fail! Exiting..."
+			exit 2;
+		fi
+	fi
+
+	QLIBS=`ls ${INSTALL_DIR}/lib/`
+	for libso in ${QLIBS}; do
+		if [ -e ${QUAKE2_HOME}/${libso} ]; then
+			devel-su user -c "rm -f ${QUAKE2_HOME}/${libso}"
+			echo "rm -f ${QUAKE2_HOME}/${libso}"
+		fi
+		devel-su user -c "ln -s ${INSTALL_DIR}/lib/${libso} ${QUAKE2_HOME}"
+		echo "ln -s ${INSTALL_DIR}/lib/${libso} ${QUAKE2_HOME}"
+	done
+
+	QCFGS=`ls ${INSTALL_DIR}/${BASEQ2}`
+	for cfg in ${QCFGS}; do
+		if [ -e ${QUAKE2_HOME}/${BASEQ2}/${cfg} ]; then
+			devel-su user -c "rm -f ${QUAKE2_HOME}/${BASEQ2}/${cfg}"
+			echo "rm -f ${QUAKE2_HOME}/${BASEQ2}/${cfg}"
+		fi
+		if [ "xgamesarm.so" == x${cfg} ]; then
+			devel-su user -c "ln -s ${INSTALL_DIR}/${BASEQ2}/${cfg} ${QUAKE2_HOME}/${BASEQ2}"
+			echo "ln -s ${INSTALL_DIR}/${BASEQ2}/${cfg} ${QUAKE2_HOME}/${BASEQ2}"
+		else
+		echo "${QUAKE2_HOME}/${BASEQ2}/${cfg}"
+			devel-su user -c "cp -f ${INSTALL_DIR}/${BASEQ2}/${cfg} ${QUAKE2_HOME}/${BASEQ2}"
+			echo "cp -f ${INSTALL_DIR}/${BASEQ2}/${cfg} ${QUAKE2_HOME}/${BASEQ2}"
+		fi
+	done
+
+	echo "Quake2 configure done."
+fi
+

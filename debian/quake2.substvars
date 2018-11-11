@@ -1,0 +1,2 @@
+shlibs:Depends=libc6 (>= 2.7), libgcc1 (>= 1:4.1.1), libsdl-image1.2 (>= 1.2.10), libsdl1.2, libx11-6 (>= 2:1.2.99.901), libxext6
+misc:Depends=

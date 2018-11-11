@@ -1,0 +1,46 @@
+/usr/include/alsa/asoundef.h:#define IEC958_AES0_PRO_FS_32000	(3<<6)	/**< 32kHz */
+/usr/include/alsa/asoundef.h:#define IEC958_AES3_CON_FS_32000	(3<<0)	/**< 32kHz */
+/usr/include/alsa/asoundef.h:#define IEC958_AES4_CON_ORIGFS_32000	(12<<4)	/**< 32kHz */
+/usr/include/alsa/asoundef.h:#define MIDI_CTL_LSB_GENERAL_PURPOSE3 	0x32	/**< General purpose 3 */
+/usr/include/alsa/control_external.h:	char name[32];
+/usr/include/alsa/iatomic.h:#define atomic_add(i,v)  bfin_atomic_add32(&(v)->counter, i)
+/usr/include/alsa/iatomic.h:#define atomic_sub(i,v)  bfin_atomic_sub32(&(v)->counter, i)
+/usr/include/alsa/iatomic.h:#define atomic_inc(v)    bfin_atomic_inc32(&(v)->counter);
+/usr/include/alsa/iatomic.h:#define atomic_dec(v)    bfin_atomic_dec32(&(v)->counter);
+/usr/include/alsa/pcm.h:	/** Signed 24 bit Little Endian using low three bytes in 32-bit word */
+/usr/include/alsa/pcm.h:	/** Signed 24 bit Big Endian using low three bytes in 32-bit word */
+/usr/include/alsa/pcm.h:	/** Unsigned 24 bit Little Endian using low three bytes in 32-bit word */
+/usr/include/alsa/pcm.h:	/** Unsigned 24 bit Big Endian using low three bytes in 32-bit word */
+/usr/include/alsa/pcm.h:	/** Signed 32 bit Little Endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_S32_LE,
+/usr/include/alsa/pcm.h:	/** Signed 32 bit Big Endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_S32_BE,
+/usr/include/alsa/pcm.h:	/** Unsigned 32 bit Little Endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_U32_LE,
+/usr/include/alsa/pcm.h:	/** Unsigned 32 bit Big Endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_U32_BE,
+/usr/include/alsa/pcm.h:	/** Float 32 bit Little Endian, Range -1.0 to 1.0 */
+/usr/include/alsa/pcm.h:	/** Float 32 bit Big Endian, Range -1.0 to 1.0 */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_S24_3LE = 32,
+/usr/include/alsa/pcm.h:	/** Signed 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_S32 = SND_PCM_FORMAT_S32_LE,
+/usr/include/alsa/pcm.h:	/** Unsigned 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_U32 = SND_PCM_FORMAT_U32_LE,
+/usr/include/alsa/pcm.h:	/** Float 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	/** Signed 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_S32 = SND_PCM_FORMAT_S32_BE,
+/usr/include/alsa/pcm.h:	/** Unsigned 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	SND_PCM_FORMAT_U32 = SND_PCM_FORMAT_U32_BE,
+/usr/include/alsa/pcm.h:	/** Float 32 bit CPU endian */
+/usr/include/alsa/pcm.h:	/** 32-bit ID */
+/usr/include/alsa/pcm.h:	unsigned int id32[4];
+/usr/include/alsa/pcm.h:u_int32_t snd_pcm_format_silence_32(snd_pcm_format_t format);
+/usr/include/alsa/seq_event.h:/** generic set of integers (3x32 bit) */
+/usr/include/alsa/seq_event.h:typedef struct snd_seq_ev_raw32 {
+/usr/include/alsa/seq_event.h:	unsigned int d[3];		/**< 32 bit value */
+/usr/include/alsa/seq_event.h:} snd_seq_ev_raw32_t;
+/usr/include/alsa/seq_event.h:		unsigned int d32[2];		/**< any data */
+/usr/include/alsa/seq_event.h:		snd_seq_ev_raw32_t raw32;	/**< raw32 data */
+/usr/include/alsa/seq.h:/** port capabilities (32 bits) */
+/usr/include/alsa/seq.h:/** This port is compatible with the Roland MT-32. */
+/usr/include/alsa/seq.h:#define SND_SEQ_PORT_TYPE_MIDI_MT32	(1<<5)

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+
+QUAKE2_HOME=/home/user/.quake2
+REF_SO=ref_*.so
+GAME_SO=game*.so
+BASEQ2=baseq2
+
+case "$1" in
+	remove|upgrade|deconfigure)
+		if [ -d ${QUAKE2_HOME} ]; then
+			Q2LIB=`ls ${QUAKE2_HOME}/${REF_SO} 2> /dev/null || true`
+			for libso in ${Q2LIB}; do
+				echo "rm -f ${libso}"
+				rm -f ${libso}
+			done
+		fi
+
+		if [ -d ${QUAKE2_HOME}/${BASEQ2} ]; then
+			Q2LIB=`ls ${QUAKE2_HOME}/${BASEQ2}/${GAME_SO} 2> /dev/null || true`	
+			if [ "x" != x${Q2LIB} ]; then
+				echo "rm -f ${Q2LIB}"
+				rm -f ${Q2LIB}
+			fi
+		fi
+
+		echo "Quake2 remove done."
+		;;
+
+    failed-upgrade)
+    ;;
+
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac

@@ -1,0 +1,48 @@
+glquake2 (0.3-3harmattan2015natasha5) unstable; urgency=low
+
+  * Fixed a bug.
+  * Fixed swipe bug on virtual button layer.
+
+ -- Karin Zhao <beyondk2000@gmail.com>  Thu, 30 Aug 2018 19:52:15 +0800
+
+glquake2 (0.3-3harmattan2015natasha1) unstable; urgency=low
+
+  * Hardware-Rendering by OpenGLES 1.1.
+  * Add On-Screen button and joystick with OpenGL, support multitouch.
+  * Force to fullscreen, and not grab mouse.
+  * Add On-Screen button and joystick with SDL, but it is not good.
+  * Change Anna-Style desktop icon.
+  * Package name change to glquake2
+
+ -- Karin Zhao <beyondk2000@gmail.com>  Wed, 3 Jul 2018 15:36:18 +0800
+
+quake2 (0.3-3) unstable; urgency=low
+
+  * Added keyboard layout support
+
+ -- CepiPerez <cepiperez@gmail.com>  Wed, 21 Apr 2010 15:36:18 -0300
+
+quake2 (0.3-2) unstable; urgency=low
+
+  * Fix post installation script (again, adding permissions)
+
+ -- CepiPerez <cepiperez@gmail.com>  Mon, 12 Apr 2010 19:56:22 -0300
+
+quake2 (0.3-1) unstable; urgency=low
+
+  * Fix post installation script (again) :P
+
+ -- CepiPerez <cepiperez@gmail.com>  Mon, 12 Apr 2010 19:56:22 -0300
+
+quake2 (0.2-1) unstable; urgency=low
+
+  * Fix post installation script
+
+ -- CepiPerez <cepiperez@gmail.com>  Mon, 12 Apr 2010 19:56:22 -0300
+
+quake2 (0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- CepiPerez <cepiperez@gmail.com>  Mon, 12 Apr 2010 19:56:22 -0300
+
