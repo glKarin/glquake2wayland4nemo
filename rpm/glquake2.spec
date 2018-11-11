@@ -15,7 +15,7 @@ BuildRequires:	pkgconfig(wayland-client)
 BuildRequires:	pkgconfig(wayland-egl)
 BuildRequires:	pkgconfig(egl)
 BuildRequires:	pkgconfig(glesv1_cm)
-#BuildRequires:	pkgconfig(alsa)
+BuildRequires:	alsa-lib-devel
 Requires:	libhybris-libGLESv1
 Requires:	libhybris-libEGL
 Requires:	libhybris-libwayland-egl
@@ -28,6 +28,7 @@ GL Quake II + touch on wayland for Nemo. Only support OpenGL hardware renderer.
  To run the game copy pak0.pak from original game to /home/nemo/.quake2/baseq2 folder.
  User executale script is '/home/nemo/.quake2/GLquake2.sh', if the script file is exists, it will execute user script, else execute global default command. See also in shell script: '/usr/share/quake2/GLquake2'.
 
+%define get_arch %(uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc/ -e s/sparc64/sparc/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
 
 %prep
 %setup -q -n %{name}
@@ -45,10 +46,10 @@ install -D -m 755 debian/glquake2.sh $RPM_BUILD_ROOT/usr/share/quake2/GLquake2
 install -D -m 644 debian/glquake2.desktop $RPM_BUILD_ROOT/usr/share/applications/glquake2.desktop
 install -D -m 644 debian/glquake2_80.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/80x80/apps/glquake2_80.png
 # binary
-install -D -m 755 releasearm/quake2 $RPM_BUILD_ROOT/usr/bin/quake2
+install -D -m 755 release%get_arch/quake2 $RPM_BUILD_ROOT/usr/bin/quake2
 # lib
-install -D -m 755 releasearm/gamearm.so $RPM_BUILD_ROOT/usr/share/quake2/baseq2/gamesarm.so
-install -D -m 755 releasearm/ref_glx.so $RPM_BUILD_ROOT/usr/share/quake2/lib/ref_glx.so
+install -D -m 755 release%get_arch/game%get_arch.so $RPM_BUILD_ROOT/usr/share/quake2/baseq2/games%get_arch.so
+install -D -m 755 release%get_arch/ref_glx.so $RPM_BUILD_ROOT/usr/share/quake2/lib/ref_glx.so
 # resource
 install -D -m 644 debian/config.cfg $RPM_BUILD_ROOT/usr/share/quake2/baseq2/config.cfg
 mkdir -p $RPM_BUILD_ROOT/usr/share/quake2/resc
@@ -67,7 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/glquake2.desktop
 /usr/share/icons/hicolor/80x80/apps/glquake2_80.png
 /usr/bin/quake2
-/usr/share/quake2/baseq2/gamesarm.so
+/usr/share/quake2/baseq2/games%get_arch.so
 /usr/share/quake2/lib/ref_glx.so
 /usr/share/quake2/baseq2/config.cfg
 /usr/share/quake2/resc
