@@ -64,6 +64,9 @@ void *data = NULL;
 
 static karin_FrameBufferObject fbo_object;
 karin_FrameBufferObject *fbo = &fbo_object;
+#define VID_HEIGHT fbo->m_viewportWidth
+#define VID_WIDTH fbo->m_viewportHeight
+#define K_UNUSED(x) (void)(x)
 
 #define EGLDLSYM(name) _##name = eglGetProcAddress(#name)
 
@@ -137,6 +140,9 @@ static void karinCoord(int ox, int oy, int w, int h, int *rx, int *ry)
 {
 	if(!rx || !ry)
 		return;
+
+	K_UNUSED(w);
+	K_UNUSED(h);
 
 	*rx = oy;
 	*ry = ox;
@@ -254,7 +260,7 @@ unsigned karinXI2MouseEvent(int button, unsigned pressed, int x, int y)
 	int rx;
 	int ry;
 
-	karinCoord(x, y, vid.width, vid.height, &rx, &ry);
+	karinCoord(x, y, VID_WIDTH, VID_HEIGHT, &rx, &ry);
 
 	return karinGLVKBMouseEvent(button, pressed, rx, ry, karinHandleVKBAction);
 }
@@ -264,7 +270,7 @@ unsigned karinXI2MotionEvent(int button, unsigned pressed, int x, int y, int dx,
 	int rx;
 	int ry;
 
-	karinCoord(x, y, vid.width, vid.height, &rx, &ry);
+	karinCoord(x, y, VID_WIDTH, VID_HEIGHT, &rx, &ry);
 
 	return karinGLVKBMouseMotionEvent(button, pressed, rx,  ry, dy, dx, karinHandleVKBAction);
 }
@@ -364,7 +370,7 @@ static void karinEGL(void)
 		EGL_BLUE_SIZE, 8,
 		EGL_ALPHA_SIZE, 8,
 
-		EGL_DEPTH_SIZE, 8,
+		EGL_DEPTH_SIZE, 8, // 24
 		EGL_STENCIL_SIZE, 8,
 		EGL_BUFFER_SIZE, 16,
 
@@ -429,6 +435,8 @@ static void karinTouchDown(void *data, struct wl_touch *wl_touch, uint32_t seria
 {
 	karin_TouchEvent *e;
 
+	K_UNUSED(data);
+
 	e = karinUpdate(Touch_Down, id, x, y, time);
 
 	if(e)
@@ -441,6 +449,8 @@ static void karinTouchDown(void *data, struct wl_touch *wl_touch, uint32_t seria
 static void karinTouchUp(void *data, struct wl_touch *wl_touch, uint32_t serial, uint32_t time, int32_t id)
 {
 	karin_TouchEvent *e;
+
+	K_UNUSED(data);
 
 	e = karinUpdate(Touch_Up, id, 0, 0, time);
 
@@ -457,6 +467,8 @@ static void karinTouchMotion(void *data, struct wl_touch *wl_touch, uint32_t tim
 {
 	karin_TouchEvent *e;
 
+	K_UNUSED(data);
+
 	e = karinUpdate(Touch_Motion, id, x, y, time);
 
 	if(e)
@@ -466,34 +478,44 @@ static void karinTouchMotion(void *data, struct wl_touch *wl_touch, uint32_t tim
 	}
 }
 
-static void karinTouchFrame(void *data, struct wl_touch *wl_touch)
+static void karinTouchFrame(void *data, struct wl_touch *wt)
 {
+	K_UNUSED(data);
+	K_UNUSED(wt);
 }
 
-static void karinTouchCancel(void *data, struct wl_touch *wl_touch)
+static void karinTouchCancel(void *data, struct wl_touch *wt)
 {
+	K_UNUSED(data);
+	K_UNUSED(wt);
 }
 
 
 void karinShellSurfaceListenerPing(void *data, struct wl_shell_surface *shell_surface, uint32_t serial)
 {
+	K_UNUSED(data);
 	wl_shell_surface_pong(shell_surface, serial);
 }
 
 void	karinShellSurfaceListenerConfigure(void *data, struct wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height)
 {
-	//printf("*************                 %d %d\n", width, height);
-	// intex 1280 720
+	K_UNUSED(data);
+	// intex aquafish 720x1280
 	karinResize(width, height);
 }
 
 void karinShellSurfaceListenerPopupDone(void *data, struct wl_shell_surface *shell_surface)
 {
+	K_UNUSED(data);
+	K_UNUSED(shell_surface);
 }
 
 
 void karinRegistryListenerGlobalRemove(void *data, struct wl_registry *reg, uint32_t name)
 {
+	K_UNUSED(data);
+	K_UNUSED(reg);
+	K_UNUSED(name);
 } 
 
 void karinRegistryListenerGlobal(void *data, struct wl_registry *reg, uint32_t id, const char *interface, uint32_t version)
@@ -741,11 +763,6 @@ return key;
 	 This has bugs if two keys are being pressed simultaneously and the
 	 events start getting interleaved.
 	 */
-int X11_KeyRepeat()
-{
-	return 0;
-}
-
 
 static void HandleEvents(void)
 {
@@ -1021,6 +1038,7 @@ int GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 	/* EGL */
 	karinEGL();
 
+	harm_swipeSens = ri.Cvar_Get( HARM_SWIPE_SENS, HARM_SWIPE_SENS_DEFAULT_P, CVAR_USERINFO | CVAR_ARCHIVE);
 	fbo_object = new_karin_FrameBufferObject(width, height, width, height);
 	fbo->bind(fbo);
 

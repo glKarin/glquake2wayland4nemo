@@ -1872,6 +1872,8 @@ void karinResizeGLVKB(float w, float h)
 	if(the_vkb.width == w && the_vkb.height == h)
 		return;
 
+	the_vkb.inited = bfalse;
+
 	the_vkb.width = w;
 	the_vkb.height = h;
 

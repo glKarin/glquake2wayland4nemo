@@ -54,6 +54,7 @@ static GLint blend_dst;
 static GLboolean blend;
 static GLboolean alpha_test;
 static GLboolean depth_test;
+static GLboolean scissor_test;
 static GLint matrix_mode;
 static GLint viewport[4];
 
@@ -67,6 +68,7 @@ static void karinBeginRender2D(GLint width, GLint height)
 		blend = qglIsEnabled(GL_BLEND);
 		alpha_test = qglIsEnabled(GL_ALPHA_TEST);
 		depth_test = qglIsEnabled(GL_DEPTH_TEST);
+		scissor_test = qglIsEnabled(GL_SCISSOR_TEST);
 		if(qglActiveTexture)
 			qglGetIntegerv(GL_ACTIVE_TEXTURE, &active_texture);
 		if(qglClientActiveTexture)
@@ -90,6 +92,8 @@ static void karinBeginRender2D(GLint width, GLint height)
 			qglEnable(GL_TEXTURE_2D);
 		if(depth_test)
 			qglDisable(GL_DEPTH_TEST);
+		if(scissor_test)
+			qglDisable(GL_SCISSOR_TEST);
 		if(qglClientActiveTexture)
 			qglClientActiveTexture(GL_TEXTURE0);
 		if(qglActiveTexture)
@@ -134,6 +138,8 @@ static void karinEndRender2D(void)
 		qglBlendFunc(blend_src, blend_dst);
 		if(depth_test)
 			qglEnable(GL_DEPTH_TEST);
+		if(scissor_test)
+			qglEnable(GL_SCISSOR_TEST);
 		qglMatrixMode(matrix_mode);
 		qglViewport(viewport[0], viewport[1], viewport[2],viewport[3]);
 	}
@@ -199,7 +205,7 @@ void destory(karin_FrameBufferObject *fbo)
 {
 	if(!fbo)
 		return;
-	if(fbo->m_inited)
+	if(!fbo->m_inited)
 		return;
 
 	qglBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -225,6 +231,7 @@ unsigned getFBOStatus(void)
 			K_CASE(GL_FRAMEBUFFER_UNSUPPORTED)
 	}
 #undef K_CASE
+	return status;
 }
 
 unsigned getError(void)
@@ -298,9 +305,9 @@ void blit(karin_FrameBufferObject *fbo)
 		//qglClearColor(0.0, 0.0, 0.0, 1.0);
 		//qglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		qglDisable(GL_ALPHA_TEST);
+		qglDisable(GL_BLEND);
 		qglEnableClientState(GL_VERTEX_ARRAY);
 		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		qglDisable(GL_BLEND);
 		qglBindTexture(GL_TEXTURE_2D, fbo->m_texture);
 		qglBindBuffer(GL_ARRAY_BUFFER, fbo->m_buffer[TexCoord_Buffer]);
 		qglTexCoordPointer(2, GL_FLOAT, 0, NULL);
@@ -315,6 +322,8 @@ void blit(karin_FrameBufferObject *fbo)
 
 		qglDisableClientState(GL_VERTEX_ARRAY);
 		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		qglDisable(GL_ALPHA_TEST);
+		qglDisable(GL_BLEND);
 		qglFlush();
 	}
 	karinEndRender2D();
