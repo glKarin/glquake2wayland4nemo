@@ -4,6 +4,28 @@
  * Don't use it single.
  * */
 
+#define HARM_SWIPE_SENS "harm_swipesens"
+#define HARM_SWIPE_SENS_DEFAULT 1.0
+#define HARM_SWIPE_SENS_DEFAULT_P "1.0"
+
+//#define _FLOAT_TO_INT round
+//#define _FLOAT_TO_INT floor
+#define _FLOAT_TO_INT
+
+static cvar_t *harm_swipeSens;
+
+static int karinSwipeSens(int x)
+{
+	float sens = harm_swipeSens->value;
+	if(sens <= 0.0)
+	{
+		sens = HARM_SWIPE_SENS_DEFAULT;
+		Cvar_Set(HARM_SWIPE_SENS, HARM_SWIPE_SENS_DEFAULT_P);
+	}
+	return (int)_FLOAT_TO_INT((float)x * sens);
+}
+
+
 static unsigned karinHandleVKBAction(int action, unsigned pressed, int dx, int dy)
 {
 #define		MAXCMDLINE	256
@@ -59,11 +81,16 @@ static unsigned karinHandleVKBAction(int action, unsigned pressed, int dx, int d
 	}
 	else if(r == Button_Data)
 	{
-		if(pressed && (dx != 0 || dy != 0))
+		if(pressed)
 		{
-			mx += dx;
-			my -= dy;
-			mouse_buttonstate = 0;
+			int fdx = karinSwipeSens(dx);
+			int fdy = karinSwipeSens(dy);
+			if(fdx != 0 || fdy != 0)
+			{
+				mx += fdx;
+				my -= fdy;
+				mouse_buttonstate = 0;
+			}
 		}
 	}
 
