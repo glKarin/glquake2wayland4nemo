@@ -25,11 +25,22 @@
 #define BUFFER_SIZE 4096
 
 #include <alsa/asoundlib.h>
+#ifdef _HARMATTAN_SAILFISH
+#include <audioresource/audioresource.h>
+#include <glib.h>
+#undef true
+#undef false
+#endif
 
 #include "../client/client.h"
 #include "../client/snd_loc.h"
 
 #define snd_buf BUFFER_SIZE
+
+#ifdef _HARMATTAN_SAILFISH
+static audioresource_t *audio_resc = NULL;
+static qboolean acquire = false;
+#endif
 
 static int  snd_inited;
 static short *buffer;
@@ -43,6 +54,13 @@ cvar_t *sndchannels;
 cvar_t *snddevice;
 
 static int tryrates[] = { 44100, 22051, 11025, 8000 };
+
+#ifdef _HARMATTAN_SAILFISH
+static void on_acquired(audioresource_t *as, bool acquired, void *user_data)
+{
+	acquire = acquired;
+}
+#endif
 
 qboolean SNDDMA_Init (void)
 {
@@ -59,6 +77,15 @@ qboolean SNDDMA_Init (void)
   sndchannels = Cvar_Get("sndchannels", "2", CVAR_ARCHIVE);
   snddevice = Cvar_Get("snddevice", "default", CVAR_ARCHIVE);
   
+#ifdef _HARMATTAN_SAILFISH
+	audio_resc = audioresource_init(AUDIO_RESOURCE_GAME, on_acquired, NULL);
+	audioresource_acquire(audio_resc);
+	while(!acquire)
+	{
+		g_main_context_iteration(NULL, false);
+	}
+#endif
+
   err = snd_pcm_open(&playback_handle, snddevice->string, 
 		     SND_PCM_STREAM_PLAYBACK, 0);
   if (err < 0) {
@@ -186,6 +213,7 @@ qboolean SNDDMA_Init (void)
 
   snd_inited = 1;
   return 1;
+#endif
 }
 
 int
@@ -205,6 +233,12 @@ SNDDMA_Shutdown (void)
     snd_pcm_drop(playback_handle);
     snd_pcm_close(playback_handle);
     snd_inited = 0;
+#ifdef _HARMATTAN_SAILFISH
+		audioresource_release(audio_resc);
+		audioresource_free(audio_resc);
+		audio_resc = NULL;
+		acquire = false;
+#endif
   }
   free(dma.buffer);
   dma.buffer = NULL;
@@ -217,6 +251,9 @@ Send sound to device if buffer isn't really the dma buffer
 void
 SNDDMA_Submit (void)
 {
+	if(!acquire)
+		return;
+
   int written;
   
   if ((written = snd_pcm_writei(playback_handle, dma.buffer, snd_buf)) < 0) {
