@@ -17,23 +17,23 @@ case ${1} in
 		BUILD="build"
 		;;
 	"run")
-		Q2="quake2"
+		Q2="sdlquake2"
 		;;
 	"debug")
-		Q2="quake2"
+		Q2="sdlquake2"
 		RUN="debug"
 		;;
 	"build_run")
 		BUILD="build"
-		Q2="quake2"
+		Q2="sdlquake2"
 		;;
 	"build_debug")
 		BUILD="build"
-		Q2="quake2"
+		Q2="sdlquake2"
 		RUN="debug"
 		;;
 	*)
-		Q2="quake2"
+		Q2="sdlquake2"
 		;;
 esac
 
@@ -70,5 +70,5 @@ cp ./gamearm.so ~nemo/.quake2/baseq2/gamesarm.so
 if [ x${RUN} == "xdebug" ]; then
 	gdb --args ./${Q2} +set basedir /home/nemo/.quake2 +set vid_ref glx +set gl_driver libGLES_CM.so +set vid_fullscreen 1
 else
-	./${Q2} +set basedir /home/nemo/.quake2 +set vid_ref glx +set gl_driver libGLESv1_CM.so +set vid_fullscreen 1 +set cl_drawfps 1 +set gl_ext_multitexture 0 +set gl_ext_pointparameters 0
+	./${Q2} +set basedir /home/nemo/.quake2 +set vid_ref glx +set gl_driver libGLESv1_CM.so +set vid_fullscreen 1 +set cl_drawfps 1 +set gl_ext_multitexture 0 +set gl_ext_pointparameters 0 +set harm_swipesens 0.8
 fi

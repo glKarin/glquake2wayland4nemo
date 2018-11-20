@@ -12,7 +12,7 @@
 # (Note: not all options are available for all platforms).
 # quake2 (uses OSS for sound, cdrom ioctls for cd audio) is automatically built.
 # game$(ARCH).so is automatically built.
-BUILD_SDLQUAKE2=NO #YES	# sdlquake2 executable (uses SDL for cdrom and sound)
+BUILD_SDLQUAKE2=YES #YES	# sdlquake2 executable (uses SDL for cdrom and sound)
 BUILD_SVGA=NO		# SVGAlib driver. Seems to work fine.
 BUILD_X11=NO #YES		# X11 software driver. Works somewhat ok.
 BUILD_GLX=YES		# X11 GLX driver. Works somewhat ok.
@@ -24,7 +24,7 @@ BUILD_XATRIX=NO		# game$(ARCH).so for xatrix (see README.r for details)
 BUILD_ROGUE=NO		# game$(ARCH).so for rogue (see README.r for details)
 BUILD_JOYSTICK=YES	# build in joystick support
 BUILD_ARTS=NO # build in support for libaRts sound.
-BUILD_ALSA=YES	# build in support for ALSA (default sound on 2.6)
+BUILD_ALSA=NO	# build in support for ALSA (default sound on 2.6)
 BUILD_DEDICATED=NO	# build a dedicated quake2 server
 BUILD_AA=NO		# build the ascii soft renderer.
 BUILD_QMAX=NO		# build the fancier GL graphics
@@ -32,7 +32,6 @@ BUILD_RETEXTURE=NO	# build a version supporting retextured graphics
 BUILD_REDBLUE=NO	# build a red-blue 3d glasses renderer...
 STATICSDL=NO
 SDLDIR=/usr/local/lib
-BUILD_SDL2QUAKE2=NO # sdl2quake2 executable (uses SDL2 for sound)
 
 # Other compile-time options:
 # Compile with IPv6 (protocol independent API). Tested on FreeBSD
@@ -172,6 +171,8 @@ LDFLAGS=-lm
 endif
 ifeq ($(OSTYPE),Linux)
 LDFLAGS=$(shell sdl2-config --libs) -lm -ldl
+LDFLAGS+= `pkg-config --cflags --libs audioresource glib-2.0`
+BASE_CFLAGS += `pkg-config --cflags --libs glib-2.0 audioresource`
 endif
 
 ifeq ($(strip $(BUILD_ARTS)),YES)
@@ -179,7 +180,8 @@ LDFLAGS+=$(shell artsc-config --libs)
 endif
 
 ifeq ($(strip $(BUILD_ALSA)),YES)
-LDFLAGS+=-lasound
+LDFLAGS+=-lasound `pkg-config --cflags --libs audioresource glib-2.0`
+BASE_CFLAGS += `pkg-config --cflags --libs glib-2.0 audioresource`
 endif
 
 
@@ -320,10 +322,6 @@ endif # ARCH ppc
 ifeq ($(ARCH),arm)
  ifeq ($(strip $(BUILD_SDLQUAKE2)),YES)
   TARGETS += $(BUILDDIR)/sdlquake2
- endif
- 
- ifeq ($(strip $(BUILD_SDL2QUAKE2)),YES)
-  TARGETS += $(BUILDDIR)/sdl2quake2
  endif
  
  ifeq ($(strip $(BUILD_SVGA)),YES)
@@ -542,12 +540,8 @@ endif
 endif
 
 QUAKE2_SDL_OBJS = \
-	$(BUILDDIR)/client/cd_sdl.o \
 	$(BUILDDIR)/client/snd_sdl.o
-
-# sailfish SDL2
-QUAKE2_SDL2_OBJS = \
-	$(BUILDDIR)/karin/snd_sdl2.o
+# $(BUILDDIR)/client/cd_sdl.o \
 
 ifeq ($(ARCH),i386)
 QUAKE2_AS_OBJS = \
@@ -561,9 +555,6 @@ $(BUILDDIR)/quake2 : $(QUAKE2_OBJS) $(QUAKE2_LNX_OBJS) $(QUAKE2_AS_OBJS)
 
 $(BUILDDIR)/sdlquake2 : $(QUAKE2_OBJS) $(QUAKE2_SDL_OBJS) $(QUAKE2_AS_OBJS)
 	$(CC) $(CFLAGS) -o $@ $(QUAKE2_OBJS) $(QUAKE2_SDL_OBJS) $(QUAKE2_AS_OBJS) $(LDFLAGS) $(SDLLDFLAGS)
-
-$(BUILDDIR)/sdl2quake2 : $(QUAKE2_OBJS) $(QUAKE2_SDL2_OBJS) $(QUAKE2_AS_OBJS)
-	$(CC) $(CFLAGS) -o $@ $(QUAKE2_OBJS) $(QUAKE2_SDL2_OBJS) $(QUAKE2_AS_OBJS) $(LDFLAGS) $(SDLLDFLAGS)
 
 $(BUILDDIR)/client/cl_cin.o :     $(CLIENT_DIR)/cl_cin.c
 	$(DO_CC)
@@ -723,9 +714,6 @@ $(BUILDDIR)/client/snd_sdl.o :     $(LINUX_DIR)/snd_sdl.c
 
 $(BUILDDIR)/karin/vkb.o :         $(KARIN_DIR)/vkb.c $(KARIN_DIR)/vkb.h 
 	$(DO_SHLIB_CC)
-
-$(BUILDDIR)/karin/snd_sdl2.o :     $(KARIN_DIR)/snd_sdl2.c
-	$(DO_CC) 
 
 
 #############################################################################
