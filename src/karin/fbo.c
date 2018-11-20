@@ -304,8 +304,6 @@ void blit(karin_FrameBufferObject *fbo)
 	{
 		//qglClearColor(0.0, 0.0, 0.0, 1.0);
 		//qglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		qglDisable(GL_ALPHA_TEST);
-		qglDisable(GL_BLEND);
 		qglEnableClientState(GL_VERTEX_ARRAY);
 		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		qglBindTexture(GL_TEXTURE_2D, fbo->m_texture);
