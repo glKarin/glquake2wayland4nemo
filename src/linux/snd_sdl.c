@@ -30,12 +30,36 @@
 #include "../client/client.h"
 #include "../client/snd_loc.h"
 
+#ifdef _HARMATTAN_SAILFISH
+#include <audioresource/audioresource.h>
+#include <glib.h>
+#endif
+
 static int  snd_inited;
 static dma_t *shm;
+
+#ifdef _HARMATTAN_SAILFISH
+#define UNUSED(x) (void)(x)
+
+static audioresource_t *audio_resc = NULL;
+static bool acquired = false;
+
+static void on_audioresource_acquired(audioresource_t * as, bool _acquired, void * user_data)
+{
+	UNUSED(as);
+	UNUSED(user_data);
+	acquired = _acquired;
+}
+#endif
 
 static void
 paint_audio (void *unused, Uint8 * stream, int len)
 {
+#ifdef _HARMATTAN_SAILFISH
+	if(!acquired)
+		return;
+#endif
+
 	if (shm) {
 		shm->buffer = stream;
 		shm->samplepos += len / (shm->samplebits / 4);
@@ -50,6 +74,18 @@ SNDDMA_Init (void)
 	SDL_AudioSpec desired, obtained;
 	int desired_bits, freq;
 	
+#ifdef _HARMATTAN_SAILFISH
+	if(!audio_resc)
+	{
+		audio_resc = audioresource_init(AUDIO_RESOURCE_GAME, on_audioresource_acquired, NULL);
+		audioresource_acquire(audio_resc);
+		while(!acquired)
+		{
+			g_main_context_iteration(NULL, false);
+		}
+	}
+#endif
+
 	if (SDL_WasInit(SDL_INIT_EVERYTHING) == 0) {
 		if (SDL_Init(SDL_INIT_AUDIO) < 0) {
 			Com_Printf ("Couldn't init SDL audio: %s\n", SDL_GetError ());
@@ -164,6 +200,15 @@ SNDDMA_Shutdown (void)
 		SDL_Quit();
 	else
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+#ifdef _HARMATTAN_SAILFISH
+	if(audio_resc)
+	{
+		audioresource_release(audio_resc);
+		audioresource_free(audio_resc);
+		audio_resc = NULL;
+	}
+	acquired = false;
+#endif
 }
 
 /*
