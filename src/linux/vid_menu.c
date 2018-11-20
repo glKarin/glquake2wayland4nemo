@@ -167,7 +167,7 @@ static void ApplyChanges( void *unused )
 	Cvar_SetValue( "vid_fullscreen", s_fs_box[s_current_menu_index].curvalue );
 #endif
 	Cvar_SetValue( "gl_ext_palettedtexture", s_paletted_texture_box.curvalue );
-#ifdef _HARMATTAN
+#ifndef _HARMATTAN_SAILFISH
 	Cvar_SetValue( "sw_mode", 20 );
 	Cvar_SetValue( "gl_mode", 20 );
 #else
@@ -317,7 +317,13 @@ void VID_MenuInit( void )
 	refs[counter] = (char*) 0;
 
 	if ( !gl_driver )
+#ifdef _HARMATTAN_SAILFISH
+		gl_driver = Cvar_Get( "gl_driver", "libGLESv1_CM.so", 0 );
+#elif defined(_HARMATTAN)
+		gl_driver = Cvar_Get( "gl_driver", "libGLES_CM.so", 0 );
+#else
 		gl_driver = Cvar_Get( "gl_driver", "libGL.so", 0 );
+#endif
 	if ( !gl_picmip )
 		gl_picmip = Cvar_Get( "gl_picmip", "0", 0 );
 	if ( !gl_mode )
